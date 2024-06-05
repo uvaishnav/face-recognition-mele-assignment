@@ -7,4 +7,3 @@ scikit-learn
 tensorflow
 tf-keras
 deepface
-git+https://github.com/rcmalli/keras-vggface.git
