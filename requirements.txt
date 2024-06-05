@@ -7,3 +7,4 @@ scikit-learn
 tensorflow
 tf-keras
 deepface
+opencv-python
