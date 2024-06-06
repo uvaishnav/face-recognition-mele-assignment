@@ -1,12 +1,21 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, Response
-import cv2
-import tensorflow as tf
-import numpy as np
+# Standard Libraries
 import os
-import pickle
-from werkzeug.utils import secure_filename
-from predictor import FaceRecognizer
 
+# Third-Party Libraries
+from flask import Flask, render_template, request, redirect, url_for, flash, Response
+from werkzeug.utils import secure_filename
+
+# Image processing Library
+import cv2
+
+# data handling Library
+import numpy as np
+
+# Machine Learning Models
+import tensorflow as tf
+
+# Local Modules
+from predictor import FaceRecognizer
 app = Flask(__name__)
 
 # getting our face recognizer Instance
