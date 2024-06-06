@@ -20,7 +20,7 @@ from deepface.basemodels import Facenet, OpenFace
 
 """
 The idea is to create a classinstance file with common pipeline, 
-we use for predicting preson from image or adding a new person and identifing him/her
+we use for predicting person from image or adding a new person and identifying him/her
 """
 
 class FaceRecognizer(BaseEstimator, TransformerMixin):
@@ -30,17 +30,22 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
     2) Adding the embedding of a new person and recognizing him/her in future images.
     """
 
-    def __init__(self, meta_learner) -> None:
+    def __init__(self, meta_learner, embedding_db_path='embeddings_db.pkl') -> None:
         # Load required models
         self.facenet_model = Facenet.load_facenet128d_model()
         self.openface_model = OpenFace.load_model()
         self.meta_learner = meta_learner
 
-        # Initialize dictionary to store embeddings
-        self.embeddings_db = {}
-
         # Initialize face detector
         self.detector = MTCNN()
+
+        # Load or initialize embeddings_db
+        self.embedding_db_path = embedding_db_path
+        if os.path.exists(embedding_db_path):
+            with open(embedding_db_path, 'rb') as f:
+                self.embeddings_db = pickle.load(f)
+        else:
+            self.embeddings_db = {}
 
     def extract_faces(self, image):
         """
@@ -79,6 +84,8 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
         if len(faces) == 0:
             print("No faces detected")
             return None
+        else:
+            print("{} faces detected".format(len(faces)))
         
         print("features for facenet :",faces.shape)
         # Extract features using Facenet
@@ -108,6 +115,10 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
             normalized_features = normalize(features)
             self.embeddings_db[label] = normalized_features
 
+            # Save the updated embeddings_db to file
+            with open(self.embedding_db_path, 'wb') as f:
+                pickle.dump(self.embeddings_db, f)
+
     def predict(self, image):
         """
         Predict the identity of the person in the given image.
@@ -120,12 +131,13 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
         """
         features = self.extract_features(image)
         
-        print("Features for training :",features.shape)
+        
         if features is not None:
+            print("Features for training :",features.shape)
             return self.meta_learner.predict(features)
         return None
     
-    def recognize(self, image, threshold=0.5):
+    def recognize(self, image, threshold=0.8):
         """
         Recognize the identity of the person in the given image.
 
@@ -143,6 +155,8 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
             min_dist = float('inf')
             identity = None
 
+            print("No of embeddings till now : {}".format(len(self.embeddings_db)))
+
             for label, embeddings in self.embeddings_db.items():
                 dist = np.linalg.norm(embeddings - new_embedding)
                 if dist < min_dist:
@@ -152,5 +166,3 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
             if min_dist < threshold:
                 return identity
         return "Unknown"
-
-
