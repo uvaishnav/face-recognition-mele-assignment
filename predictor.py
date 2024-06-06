@@ -137,7 +137,7 @@ class FaceRecognizer(BaseEstimator, TransformerMixin):
             return self.meta_learner.predict(features)
         return None
     
-    def recognize(self, image, threshold=0.8):
+    def recognize(self, image, threshold=0.5):
         """
         Recognize the identity of the person in the given image.
 

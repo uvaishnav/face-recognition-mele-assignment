@@ -45,7 +45,78 @@ Here's the revised table with icons included in the Technology section:
      - Generate and visualize the confusion matrix.
      - Produce a classification report detailing precision, recall, and F1-score.
    - **Reasoning:** Using comprehensive evaluation metrics and visualizations helps in understanding the model's performance and areas of improvement.
-   
+
+
+## 🎭 Face Recognition Web Application Overview
+
+### Initial Work
+As discussed in the Implementation Overview, we have developed a face recognition model by leveraging transfer learning and ensemble techniques using state-of-the-art pretrained models like FaceNet and OpenFace. This model is trained to identify 31 different celebrities. 
+- 📊 [Sample Prediction](sample_prediction.ipynb)
+
+### Building the Application
+We have a meta-learner that can take features from FaceNet and OpenFace to effectively identify celebrities. To use it for an application, we need to design a clear pipeline that:
+1. **Predicts Celebrity Identity**:
+   - Takes an input image
+   - Extracts features
+   - Returns predictions
+
+Our application must also facilitate adding an image of a new person for future recognition. The pipeline should:
+2. **Store Embeddings for New Users**:
+   - Take an input image
+   - Extract features
+   - Store embeddings
+
+3. **Recognize Persons Based on Stored Embeddings**:
+   - Take an input image
+   - Extract features
+   - Recognize the person based on stored embeddings
+
+We have implemented a `FaceRecognizer` class to handle all these tasks.  🧩 [View Code](predictor.py)
+
+### Features of the Application
+- 📥 **Upload Images of New Users**: Store their embeddings for future recognition.
+- 🔍 **Recognize Persons**: Identify persons based on stored embeddings.
+- 🌟 **User celebrity Match**: Our meta-learner, trained to classify given images among 31 celebrities, can predict the celebrity that the user's facial features most closely resemble. **This is a fun feature to enhance user interaction with the application.**
+
+To handle backend routes, we have used the Flask framework. 🧩 [View Code](app.py)
+
+## 🎥 Demo
+[Watch the demo video](https://github.com/uvaishnav/face-recognition-mele-assignment/assets/104910465/9b6207a6-c37b-42a1-96c1-26070fdb0516)
+
+## 🖥️ Run Locally
+
+#### Clone the project
+
+```bash
+  git clone https://github.com/uvaishnav/face-recognition-mele-assignment.git
+```
+
+#### Create a conda environment after opening the repository
+
+```bash
+  conda create -n faceenv python=3.11 -y
+```
+
+```bash
+  conda activate faceenv
+```
+
+#### Install requirements
+
+```bash
+  pip install -r requirements.txt
+```
+
+#### Start the server
+
+```bash
+python app.py
+```
+##### Now,
+
+```bash
+open up you local host and port
+```
 
 ## Conclusion
 This project demonstrates the effectiveness of using transfer learning for face recognition tasks. The use of advanced pre-trained models and robust data handling techniques ensures high accuracy and reliable performance.
